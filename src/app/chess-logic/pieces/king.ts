@@ -5,13 +5,13 @@ export class King extends Piece{
     private _hasMoved: boolean = false;
     protected override _FENChar: FENChar;
     protected override _directions: Coords[] = [
-        { x: 1, y: 0 },
-        { x: -1, y: 0 },
         { x: 0, y: 1 },
-        { x: -1, y: 1 },
-        { x: 1, y: 1 },
         { x: 0, y: -1 },
+        { x: 1, y: 0 },
         { x: 1, y: -1 },
+        { x: 1, y: 1 },
+        { x: -1, y: 0 },
+        { x: -1, y: 1 },
         { x: -1, y: -1 }
     ];
 

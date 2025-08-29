@@ -202,23 +202,31 @@ export class ChessBoard{
     }
 
     private canCaptureEnPassant(pawn: Pawn, pawnX: number, pawnY: number): boolean{
-        if(!this._lastMove) return false;
-        const {piece, prevX, prevY, currX, currY} = this._lastMove;
-        if(
-            !(piece instanceof Pawn) || 
-            piece.colour !== this._playerColour ||
-            Math.abs(currX - prevX) !== 2 ||
-            pawnX !== currX ||
-            Math.abs(pawnY - currY) !== 1
-        ) return false;
+    if (!this._lastMove) return false;
+    const { piece, prevX, prevY, currX, currY } = this._lastMove;
+    // Only possible if last move was a pawn moving two squares
+    if (!(piece instanceof Pawn)) return false;
+    if (Math.abs(currX - prevX) !== 2) return false;
+    // The capturing pawn must be on the same rank as the pawn that moved, and adjacent file
+    if (pawnX !== currX) return false; // Must be on the same rank as the pawn that moved
+    if (Math.abs(pawnY - currY) !== 1) return false; // Must be adjacent file
+    // The pawn to be captured must be of the opposite colour
+    if (piece.colour === pawn.colour) return false;
 
-        const pawnNewPositionX: number = pawnX + (pawn.colour === Colour.White ? 1 : -1);
-        const pawnNewPositionY: number = currY;
+    // The capturing pawn must be on the correct rank (4th for white, 3rd for black)
+    if ((pawn.colour === Colour.White && pawnX !== 4) || (pawn.colour === Colour.Black && pawnX !== 3)) return false;
 
-        this.chessBoard[currX][currY] = null;
-        const isPositionSafe: boolean = this.isPositionSafeAfterMove(pawn, pawnX, pawnY, pawnNewPositionX, pawnNewPositionY);
-        this.chessBoard[currX][currY] = piece;
-        return isPositionSafe;
+    // Simulate the en passant move and check if it is safe
+    const pawnNewPositionX: number = pawnX + (pawn.colour === Colour.White ? 1 : -1);
+    const pawnNewPositionY: number = currY;
+
+    // Temporarily remove the captured pawn
+    const capturedPawn = this.chessBoard[currX][currY];
+    this.chessBoard[currX][currY] = null;
+    const isPositionSafe: boolean = this.isPositionSafeAfterMove(pawn, pawnX, pawnY, pawnNewPositionX, pawnNewPositionY);
+    this.chessBoard[currX][currY] = capturedPawn;
+
+    return isPositionSafe;
     }
 
     private canCastle(king: King, kingSideCastle: boolean): boolean{

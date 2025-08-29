@@ -34,6 +34,13 @@ export class ChessBoard {
     [FENChar.BlackQueen, FENChar.BlackRook, FENChar.BlackBishop, FENChar.BlackKnight];
   }
 
+
+  public flipMode: boolean = false;
+
+  public flipBoard(): void {
+    this.flipMode = !this.flipMode;
+  }
+
   public isSquareDark(x: number, y: number): boolean {
     return ChessBoardLogic.isSquareDark(x, y);
   }

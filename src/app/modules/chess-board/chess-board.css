@@ -2,6 +2,12 @@
     display: flex;
     justify-content: center;
     flex-direction: column-reverse;
+    width: 480px;
+    height: 480px;
+}
+
+.rotated{
+    transform: rotate(180deg);
 }
 
 .row {

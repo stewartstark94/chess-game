@@ -1,3 +1,5 @@
+import { Piece } from "./pieces/piece";
+
 export enum Colour{
     White,
     Black
@@ -40,3 +42,22 @@ export const pieceImgPaths: Readonly<Record<FENChar, string>> ={
 
 export type SafeSquares = Map<string, Coords []>;
 
+export type LastMove = {
+    piece: Piece;
+    prevX: number;
+    prevY: number;
+    currX: number;
+    currY: number;
+}
+
+type KingInCheck ={
+    isInCheck: true;
+    x: number;
+    y: number;
+}
+
+type KingNotInCheck = {
+    isInCheck: false;
+}
+
+export type CheckState = KingInCheck | KingNotInCheck;

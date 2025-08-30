@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CheckState, Colour, Coords, FENChar, LastMove, pieceImgPaths, SafeSquares } from '../../chess-logic/models';
 import { ChessBoard as ChessBoardLogic } from '../../chess-logic/chess-board';  
 import { SelectedSquare } from './models';
+import { ChessBoardService } from './chess-board.service';
 
 @Component({
   selector: 'app-chess-board',
@@ -36,6 +37,8 @@ export class ChessBoard {
 
 
   public flipMode: boolean = false;
+
+  constructor(protected chessBoardService: ChessBoardService) { }
 
   public flipBoard(): void {
     this.flipMode = !this.flipMode;
@@ -111,15 +114,16 @@ export class ChessBoard {
     }
 
     const { x: prevX, y: prevY } = this.selectedSquare;
-    this.updateBoard(prevX, prevY, newX, newY);
+    this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
   }
 
-  private updateBoard(prevX: number, prevY: number, newX: number, newY: number): void{
-    this.chessBoard.move(prevX, prevY, newX, newY, this.promotedPiece);
+  protected updateBoard(prevX: number, prevY: number, newX: number, newY: number, promotedPiece: FENChar | null): void{
+    this.chessBoard.move(prevX, prevY, newX, newY, promotedPiece);
     this.chessBoardView = this.chessBoard.chessBoardView;
     this.checkState = this.chessBoard.checkState;
     this.lastMove = this.chessBoard.lastMove;
     this.unmarkingPreviouslySelectedAndSafeSquares();
+    this.chessBoardService.chessBoardState$.next(this.chessBoard.boardAsFen);
   }
 
   public promotePiece(piece:FENChar): void{
@@ -127,7 +131,7 @@ export class ChessBoard {
     this.promotedPiece = piece;
     const {x: newX, y: newY} = this.promotionCoords;
     const {x: prevX, y: prevY} = this.selectedSquare;
-    this.updateBoard(prevX, prevY, newX, newY);
+    this.updateBoard(prevX, prevY, newX, newY, this.promotedPiece);
   }
 
   public closePawnPromotionDialog(): void{
